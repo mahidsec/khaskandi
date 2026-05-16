@@ -128,6 +128,10 @@ ul { list-style: none; }
 .nav-links a:hover, .nav-links a.active { color: #fff; }
 .navbar.scrolled .nav-links a:hover, .navbar.scrolled .nav-links a.active { color: var(--text-primary); }
 .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.hamburger {
+  display: none; flex-direction: column; gap: 6px; cursor: pointer;
+  padding: .5rem; z-index: 1001;
+}
 .hamburger span {
   width: 26px; height: 2.5px; background: #fff;
   border-radius: 2px; transition: var(--transition);

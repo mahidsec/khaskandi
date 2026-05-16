@@ -16,7 +16,8 @@ window.addEventListener('scroll', () => {
   backToTop?.classList.toggle('visible', y > 400);
 
   // Smart Hide/Show
-  if (y > 500) { // Activate after leaving hero
+  const isMenuOpen = navLinks?.classList.contains('open');
+  if (y > 500 && !isMenuOpen) { // Activate after leaving hero
     if (y > lastScrollY && !navbar.classList.contains('nav-hidden')) {
       navbar?.classList.add('nav-hidden');
     } else if (y < lastScrollY && navbar.classList.contains('nav-hidden')) {
