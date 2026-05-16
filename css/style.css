@@ -90,12 +90,16 @@ ul { list-style: none; }
 .navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
   padding: .8rem 0;
-  transition: background var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), box-shadow var(--transition), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
 }
 .navbar.scrolled {
   background: rgba(10, 26, 18, 0.95);
   backdrop-filter: blur(16px);
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.navbar.nav-hidden {
+  transform: translateY(-100%);
 }
 .nav-inner {
   display: flex; align-items: center; justify-content: space-between;

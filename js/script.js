@@ -3,13 +3,30 @@ window.addEventListener('load', () => {
   setTimeout(() => document.getElementById('preloader')?.classList.add('hidden'), 600);
 });
 
-// ===== Navbar scroll effect =====
+// ===== Navbar scroll effect & Smart Hiding =====
 const navbar = document.querySelector('.navbar');
 const backToTop = document.querySelector('.back-to-top');
+let lastScrollY = window.scrollY;
+
 window.addEventListener('scroll', () => {
   const y = window.scrollY;
+  
+  // Scrolled state
   navbar?.classList.toggle('scrolled', y > 60);
   backToTop?.classList.toggle('visible', y > 400);
+
+  // Smart Hide/Show
+  if (y > 500) { // Activate after leaving hero
+    if (y > lastScrollY && !navbar.classList.contains('nav-hidden')) {
+      navbar?.classList.add('nav-hidden');
+    } else if (y < lastScrollY && navbar.classList.contains('nav-hidden')) {
+      navbar?.classList.remove('nav-hidden');
+    }
+  } else {
+    navbar?.classList.remove('nav-hidden');
+  }
+
+  lastScrollY = y;
 });
 
 // ===== Mobile menu =====
