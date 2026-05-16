@@ -3,6 +3,7 @@
   --primary: #16a34a;
   --primary-light: #22c55e;
   --primary-dark: #15803d;
+  --primary-darkest: #064e3b;
   --accent: #16a34a;
   --accent-light: #22c55e;
   --bg-dark: #0a1a12;
@@ -223,23 +224,27 @@ ul { list-style: none; }
 .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: .8rem 2rem; border-radius: 4px;
-  font-weight: 500; font-size: 1rem; letter-spacing: 0.5px;
-  transition: all 0.2s ease; border: none; cursor: pointer;
+  padding: .9rem 2.2rem; border-radius: 8px;
+  font-family: 'Hind Siliguri', var(--font-en);
+  font-weight: 600; font-size: 1rem;
+  transition: background var(--transition), color var(--transition); border: none; cursor: pointer;
+  position: relative; overflow: hidden;
 }
 .btn-primary {
   background: var(--primary);
   color: #fff;
 }
 .btn-primary:hover { 
-  background: var(--primary-dark);
+  background: #fff;
+  color: var(--primary-darkest);
 }
 .btn-outline {
-  background: transparent; color: var(--primary);
+  background: transparent; color: var(--text-primary);
   border: 1px solid var(--primary);
 }
 .btn-outline:hover { 
-  background: rgba(61, 107, 79, 0.05);
+  background: #fff;
+  color: var(--primary-darkest);
 }
 
 /* ===== Section Common ===== */
