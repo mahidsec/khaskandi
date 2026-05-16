@@ -75,14 +75,22 @@ backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: '
 
 // ===== Language Toggle (EN/BN) =====
 const langBtn = document.querySelector('.lang-toggle');
-let currentLang = 'en';
-langBtn?.addEventListener('click', () => {
-  currentLang = currentLang === 'en' ? 'bn' : 'en';
-  langBtn.textContent = currentLang === 'en' ? 'বাংলা' : 'English';
+let currentLang = 'bn';
+
+function updateLanguage() {
+  if (langBtn) langBtn.textContent = currentLang === 'en' ? 'বাংলা' : 'English';
   document.querySelectorAll('[data-en][data-bn]').forEach(el => {
     el.innerHTML = el.dataset[currentLang];
   });
+}
+
+langBtn?.addEventListener('click', () => {
+  currentLang = currentLang === 'en' ? 'bn' : 'en';
+  updateLanguage();
 });
+
+// Initialize language on load
+document.addEventListener('DOMContentLoaded', updateLanguage);
 
 // ===== Simple form handler =====
 document.getElementById('contactForm')?.addEventListener('submit', (e) => {
