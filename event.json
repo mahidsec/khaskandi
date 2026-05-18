@@ -1,0 +1,42 @@
+{
+  "eventActive": true,
+  "titleEn": "Munshiganj Gold Cup 2026",
+  "titleBn": "মুন্সীগঞ্জ গোল্ড কাপ ২০২৬",
+  "dateEn": "Starts June 10, 2026",
+  "dateBn": "১০ জুন, ২০২৬ থেকে শুরু",
+  "teamsCount": 16,
+  "styleEn": "Knockout",
+  "styleBn": "নকআউট",
+  "playerCount": 9,
+  "extraPlayers": 4,
+  "entryFeeEn": "৳1,500 per team",
+  "entryFeeBn": "৳১,৫০০ (প্রতি দল)",
+  "fineFeeEn": "Yellow: ৳100, Red: ৳200",
+  "fineFeeBn": "হলুদ কার্ড: ৳১০০, লাল কার্ড: ৳২০০",
+  "prizeFirstEn": "৳50,000 + Trophy",
+  "prizeSecondEn": "৳30,000 + Trophy",
+  "contacts": [
+    {
+      "nameEn": "Rahim (Organizer)",
+      "nameBn": "রহিম (আয়োজক)",
+      "phoneEn": "+880 1712-345678"
+    },
+    {
+      "nameEn": "Karim (Co-Organizer)",
+      "nameBn": "করিম (সহ-আয়োজক)",
+      "phoneEn": "+880 1798-765432"
+    }
+  ],
+  "rulesEn": [
+    "Standard tournament offside rules will apply.",
+    "Matches are 60 minutes long (30 min halves).",
+    "Each team must register jersey numbers before play.",
+    "Referee decisions are absolute and final."
+  ],
+  "rulesBn": [
+    "অফসাইডের সাধারণ নিয়মাবলি প্রযোজ্য হবে।",
+    "ম্যাচ ৬০ মিনিট স্থায়ী হবে (প্রতি অর্ধে ৩০ মিনিট)।",
+    "খেলার আগে প্রতিটি দলকে জার্সি নম্বর রেজিস্টার করতে হবে।",
+    "রেফারির সিদ্ধান্তই চূড়ান্ত এবং সবার জন্য বাধ্যতামূলক।"
+  ]
+}

@@ -109,6 +109,7 @@ function updateLanguage() {
     el.innerHTML = el.dataset[currentLang];
   });
   renderPlayers();
+  renderActiveEvent();
 }
 
 langBtn?.addEventListener('click', () => {
@@ -121,14 +122,211 @@ let playersData = [];
 
 async function loadPlayers() {
   try {
-    const res = await fetch('players.json');
-    if (!res.ok) throw new Error('Failed to fetch player database (players.json)');
+    const res = await fetch('squad.json');
+    if (!res.ok) throw new Error('Failed to fetch player database (squad.json)');
     const data = await res.json();
     // Sort numerically by Jersey number ascending
     playersData = data.sort((a, b) => Number(a.jersey) - Number(b.jersey));
     renderPlayers();
   } catch (err) {
     console.error('Error loading squad database:', err);
+  }
+}
+
+// ===== Active Tournament Event Fetching =====
+let activeEventData = null;
+
+async function loadActiveEvent() {
+  const container = document.getElementById('event-container');
+  if (!container) return;
+  
+  try {
+    const res = await fetch('event.json');
+    if (!res.ok) throw new Error('Failed to fetch event database (event.json)');
+    activeEventData = await res.json();
+    renderActiveEvent();
+  } catch (err) {
+    console.error('Error loading event database:', err);
+    container.innerHTML = `
+      <div class="card" style="background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 3rem 2rem; color: var(--text-muted); text-align: center;">
+        <p style="font-size: 1.1rem; font-weight: 500;">Failed to load tournament information. / টুর্নামেন্টের তথ্য লোড করতে ব্যর্থ হয়েছে।</p>
+      </div>
+    `;
+  }
+}
+
+function renderActiveEvent() {
+  const container = document.getElementById('event-container');
+  if (!container || !activeEventData) return;
+  
+  if (activeEventData.eventActive) {
+    const title = currentLang === 'en' ? activeEventData.titleEn : activeEventData.titleBn;
+    const date = currentLang === 'en' ? activeEventData.dateEn : activeEventData.dateBn;
+    
+    const labelTeams = currentLang === 'en' ? 'Total Teams' : 'মোট দল';
+    const labelStyle = currentLang === 'en' ? 'Tournament Style' : 'টুর্নামেন্ট ফরম্যাট';
+    const labelPlayers = currentLang === 'en' ? 'Match Format' : 'ম্যাচ ফরম্যাট';
+    const labelFees = currentLang === 'en' ? 'Entry Fee' : 'এন্ট্রি ফি';
+    const labelFines = currentLang === 'en' ? 'Card Penalties' : 'কার্ড জরিমানা';
+    const labelContact = currentLang === 'en' ? 'Registration Hotline' : 'রেজিস্ট্রেশন হটলাইন';
+    const labelRules = currentLang === 'en' ? 'Rules & Regulations' : 'টুর্নামেন্টের নিয়মাবলি';
+    const labelPrizeFirst = currentLang === 'en' ? 'Champion Prize' : 'চ্যাম্পিয়ন পুরস্কার';
+    const labelPrizeSecond = currentLang === 'en' ? 'Runner-up Prize' : 'রানার্স-আপ পুরস্কার';
+    
+    const teamsVal = currentLang === 'en' ? `${activeEventData.teamsCount}` : `${activeEventData.teamsCount}টি`;
+    const styleVal = currentLang === 'en' ? activeEventData.styleEn : activeEventData.styleBn;
+    const playersVal = currentLang === 'en' ? `${activeEventData.playerCount}-a-side (+${activeEventData.extraPlayers} Subs)` : `${activeEventData.playerCount}-জন (অতিরিক্ত +${activeEventData.extraPlayers})`;
+    const feeVal = currentLang === 'en' ? activeEventData.entryFeeEn : activeEventData.entryFeeBn;
+    const finesVal = currentLang === 'en' ? activeEventData.fineFeeEn : activeEventData.fineFeeBn;
+    const prizeFirstVal = activeEventData.prizeFirstEn; // English is standard
+    const prizeSecondVal = activeEventData.prizeSecondEn; // English is standard
+    let contactsHtml = '';
+    if (activeEventData.contacts && activeEventData.contacts.length > 0) {
+      activeEventData.contacts.forEach(contact => {
+        const contactName = currentLang === 'en' ? contact.nameEn : contact.nameBn;
+        const contactPhone = contact.phoneEn; // Standard English format for phone display
+        const cleanPhone = contact.phoneEn.replace(/[\s-]+/g, '');
+        
+        contactsHtml += `
+          <a href="tel:${cleanPhone}" class="t-contact-pill">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 11px; height: 11px; flex-shrink: 0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span class="t-contact-pill-label">${contactName}:</span>
+            <span class="t-contact-pill-number">${contactPhone}</span>
+          </a>
+        `;
+      });
+    }
+    
+    const rulesList = currentLang === 'en' ? activeEventData.rulesEn : activeEventData.rulesBn;
+    let rulesHtml = '';
+    rulesList.forEach(rule => {
+      rulesHtml += `
+        <li style="display: flex; align-items: flex-start; gap: 0.75rem; text-align: left; font-size: 0.95rem; color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-bottom: 0.75rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; flex-shrink: 0; margin-top: 4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>${rule}</span>
+        </li>
+      `;
+    });
+
+    container.innerHTML = `
+      <div class="t-grid-container">
+        
+        <!-- Full-Width Header Banner with Prize Card side-by-side -->
+        <div class="t-banner-header">
+          <!-- Left: Title & Date -->
+          <div class="t-banner-info" style="margin: 0; width: 100%;">
+            <h3 class="t-banner-title" style="margin-bottom: 0.6rem;">${title}</h3>
+            <p class="t-banner-date" style="margin-bottom: 0;">${date}</p>
+          </div>
+          
+          <!-- Right: Prize Pool Showcase Card -->
+          <div class="t-prize-card">
+            <!-- Champion Badge -->
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--accent); font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; gap: 0.4rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px; color: var(--accent);"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path><path d="M12 2a4 4 0 0 0-4 4v6h8V6a4 4 0 0 0-4-4z"></path></svg>
+                ${labelPrizeFirst}
+              </span>
+              <span style="font-size: 1.25rem; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.5px;">
+                ${prizeFirstVal}
+              </span>
+            </div>
+            
+            <!-- Runner-up Badge -->
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; border-left: 1px solid rgba(255, 255, 255, 0.06); padding-left: 1.2rem;">
+              <span style="font-size: 0.65rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; gap: 0.4rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px; color: var(--text-secondary);"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                ${labelPrizeSecond}
+              </span>
+              <span style="font-size: 1.25rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); font-family: 'Outfit', sans-serif; letter-spacing: -0.5px;">
+                ${prizeSecondVal}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Side-by-Side Specs & Rules Sub-Grid -->
+        <div class="t-sub-grid">
+          
+          <!-- Left Side: Specs List -->
+          <div class="t-specs-list" style="margin: 0; width: 100%;">
+            <div class="t-spec-item">
+              <span class="t-spec-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; flex-shrink: 0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                ${labelTeams}
+              </span>
+              <span class="t-spec-val">${teamsVal}</span>
+            </div>
+            <div class="t-spec-item">
+              <span class="t-spec-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; flex-shrink: 0;"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                ${labelStyle}
+              </span>
+              <span class="t-spec-val">${styleVal}</span>
+            </div>
+            <div class="t-spec-item">
+              <span class="t-spec-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"></circle><path d="M6 12a6 6 0 0 1 12 0"></path><path d="M12 2v20"></path></svg>
+                ${labelPlayers}
+              </span>
+              <span class="t-spec-val">${playersVal}</span>
+            </div>
+            <div class="t-spec-item">
+              <span class="t-spec-label">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; flex-shrink: 0;"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="12" y1="4" x2="12" y2="20"></line></svg>
+                ${labelFees}
+              </span>
+              <span class="t-spec-val">${feeVal}</span>
+            </div>
+          </div>
+          
+          <!-- Right Side: Rules & Card Penalties Wrapper -->
+          <div class="t-rules-wrapper" style="margin: 0;">
+            <h4 style="margin-top: 0;">${labelRules}</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; margin-bottom: 1.5rem;">
+              ${rulesHtml}
+            </ul>
+            
+            <!-- Card Fines Callout -->
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 1.2rem; margin-bottom: 2.5rem;">
+              <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 1px; display: block;">
+                ${labelFines}
+              </span>
+              <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 10px; height: 14px; background: #eab308; border-radius: 2px;"></div>
+                  <span>${currentLang === 'en' ? 'Yellow Card: ৳100' : 'হলুদ কার্ড: ৳১০০'}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="width: 10px; height: 14px; background: #ef4444; border-radius: 2px;"></div>
+                  <span>${currentLang === 'en' ? 'Red Card: ৳200' : 'লাল কার্ড: ৳২০০'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Registration Hotlines -->
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 1.5rem; width: 100%;">
+          <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 1.5px; display: block;">
+            ${labelContact}
+          </span>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            ${contactsHtml}
+          </div>
+        </div>
+        
+      </div>
+    `;
+  } else {
+    const noEventMsg = currentLang === 'en' ? 'Currently no active tournaments. Stay tuned!' : 'বর্তমানে কোনো সক্রিয় টুর্নামেন্ট নেই। সাথেই থাকুন!';
+    container.innerHTML = `
+      <div class="card" style="background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 3rem 2rem; color: var(--text-muted); text-align: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 48px; height: 48px; color: rgba(255, 255, 255, 0.2); margin-bottom: 1.5rem; display: block; margin-left: auto; margin-right: auto;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+        <p style="font-size: 1.1rem; font-weight: 500;">${noEventMsg}</p>
+      </div>
+    `;
   }
 }
 
@@ -229,6 +427,7 @@ function updateSelectAllState() {
 document.addEventListener('DOMContentLoaded', () => {
   updateLanguage();
   loadPlayers();
+  loadActiveEvent();
   handleScroll(); // Initialize navbar scroll state on load
   
   // Bulletproof Background Video Autoreplay Loop

@@ -939,3 +939,228 @@ ul { list-style: none; }
     max-width: calc(100vw - 2rem);
   }
 }
+
+/* ===== Tournament Two-Column Redesign ===== */
+.t-grid-container {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 3.5rem 3.5rem 5rem 3.5rem;
+  margin-bottom: 4rem;
+  backdrop-filter: blur(12px);
+  text-align: left;
+  transition: border-color var(--transition);
+}
+.t-grid-container:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.t-banner-info {
+  margin-bottom: 2.5rem;
+}
+.t-banner-title {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  font-family: var(--font-bn), var(--font-en);
+}
+.t-banner-date {
+  font-size: 1.05rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+}
+.t-banner-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+.t-contact-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  text-decoration: none;
+  transition: all var(--transition);
+  color: rgba(255, 255, 255, 0.9);
+}
+.t-contact-pill:hover {
+  background: rgba(34, 197, 94, 0.04);
+  border-color: var(--accent);
+}
+.t-contact-pill-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.3px;
+}
+.t-contact-pill-number {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  transition: color var(--transition);
+}
+.t-contact-pill:hover .t-contact-pill-number {
+  color: var(--accent);
+}
+.t-details-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.t-specs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.t-spec-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all var(--transition);
+}
+.t-spec-item:hover {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+.t-spec-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+.t-spec-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: right;
+}
+.t-rules-wrapper h4 {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 1rem;
+  font-family: var(--font-bn), var(--font-en);
+}
+@media (max-width: 992px) {
+  .t-grid-container {
+    padding: 2.5rem 2rem;
+  }
+}
+
+.t-sub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 10.5rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .t-sub-grid {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+}
+
+.t-banner-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 992px) {
+  .t-banner-header {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Upgraded Responsive Card and Badge Elements */
+.t-prize-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  text-align: left;
+  margin: 0;
+  min-width: 320px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .t-prize-card {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .t-prize-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .t-prize-card > div:last-child {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .t-contact-pill {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 140px;
+    justify-content: center;
+  }
+  .t-grid-container {
+    padding: 2rem 1.5rem 3.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .t-contact-pill {
+    flex: 1 1 100%;
+  }
+  .t-grid-container {
+    padding: 1.5rem 1rem 3rem 1rem;
+  }
+  .t-spec-item {
+    padding: 0.8rem 1rem;
+  }
+  .t-spec-val {
+    font-size: 0.88rem;
+  }
+  .t-spec-label {
+    font-size: 0.68rem;
+  }
+}
