@@ -110,6 +110,7 @@ function updateLanguage() {
   });
   renderPlayers();
   renderActiveEvent();
+  renderGallery();
 }
 
 langBtn?.addEventListener('click', () => {
@@ -132,6 +133,212 @@ async function loadPlayers() {
     console.error('Error loading squad database:', err);
   }
 }
+
+// ===== Dynamic Media Gallery Fetching =====
+let galleryData = null;
+let activeMediaList = [];
+
+async function loadGallery() {
+  const previewContainer = document.getElementById('gallery-preview-grid');
+  if (!previewContainer) return;
+  
+  try {
+    const res = await fetch('gallery.json');
+    if (!res.ok) throw new Error('Failed to fetch gallery database (gallery.json)');
+    galleryData = await res.json();
+    renderGallery();
+  } catch (err) {
+    console.error('Error loading gallery database:', err);
+  }
+}
+
+function renderGallery() {
+  const previewContainer = document.getElementById('gallery-preview-grid');
+  if (!previewContainer || !galleryData) return;
+  
+  // Interleave photos and videos for a dynamic mixed layout
+  const mixedItems = [];
+  const images = galleryData.images || [];
+  const videos = galleryData.videos || [];
+  const maxLen = Math.max(images.length, videos.length);
+  
+  for (let i = 0; i < maxLen; i++) {
+    if (i < images.length) mixedItems.push({ type: 'image', src: images[i] });
+    if (i < videos.length) mixedItems.push({ type: 'video', src: videos[i] });
+  }
+  
+  // Render up to 5 items in the preview grid, then append the "+" trigger card
+  const previewItems = mixedItems.slice(0, 5);
+  
+  // Update the global active media list
+  activeMediaList = previewItems.map(item => ({
+    src: item.type === 'image' ? `assets/zubosongho/images/${item.src}` : `assets/zubosongho/videos/${item.src}`,
+    type: item.type
+  }));
+  
+  let html = '';
+  
+  previewItems.forEach((item, idx) => {
+    if (item.type === 'image') {
+      html += `
+        <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/images/${item.src}', 'image')">
+          <img src="assets/zubosongho/images/${item.src}" alt="Khaskandi Gallery Photo ${idx + 1}" loading="lazy">
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/videos/${item.src}', 'video')">
+          <video src="assets/zubosongho/videos/${item.src}" preload="metadata" playsinline muted></video>
+          <div class="video-play-overlay">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" style="width: 32px; height: 32px;"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      `;
+    }
+  });
+  
+  // Dynamic bilingual "+" See All Card
+  const plusText = currentLang === 'en' ? 'See All' : 'সব দেখুন';
+  html += `
+    <div class="gallery-more-card" onclick="openGalleryExplorer()">
+      <div class="more-icon">+</div>
+      <div class="more-text">${plusText}</div>
+    </div>
+  `;
+  
+  previewContainer.innerHTML = html;
+}
+
+// ===== Full Gallery Explorer Controller =====
+window.openGalleryExplorer = function() {
+  const modal = document.getElementById('gallery-explorer-modal');
+  if (!modal) return;
+  
+  // Bugfix: Block background body scrolling
+  document.body.style.overflow = 'hidden';
+  
+  modal.style.display = 'flex';
+  // Trigger reflow for transition
+  modal.offsetHeight;
+  modal.style.opacity = '1';
+  
+  const content = modal.querySelector('.explorer-content');
+  if (content) content.style.transform = 'scale(1)';
+  
+  // Select first filter button and load 'all'
+  const firstBtn = modal.querySelector('.filter-btn');
+  filterExplorer('all', firstBtn);
+};
+
+window.closeGalleryExplorer = function() {
+  const modal = document.getElementById('gallery-explorer-modal');
+  if (!modal) return;
+  
+  // Bugfix: Restore background body scrolling
+  document.body.style.overflow = '';
+  
+  modal.style.opacity = '0';
+  
+  const content = modal.querySelector('.explorer-content');
+  if (content) content.style.transform = 'scale(0.95)';
+  
+  // Pause any video inside the explorer grid when closing
+  modal.querySelectorAll('video').forEach(video => video.pause());
+  
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 350);
+};
+
+window.filterExplorer = function(category, btn) {
+  const modal = document.getElementById('gallery-explorer-modal');
+  if (!modal) return;
+  
+  modal.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  
+  const grid = document.getElementById('explorer-grid');
+  if (!grid || !galleryData) return;
+  
+  // Pause any currently playing videos in the grid before resetting contents
+  grid.querySelectorAll('video').forEach(video => video.pause());
+  
+  let itemsHTML = '';
+  
+  if (category === 'all') {
+    // Interleave in explorer modal as well
+    const mixed = [];
+    const images = galleryData.images || [];
+    const videos = galleryData.videos || [];
+    const maxLen = Math.max(images.length, videos.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < images.length) mixed.push({ type: 'image', src: images[i] });
+      if (i < videos.length) mixed.push({ type: 'video', src: videos[i] });
+    }
+    
+    // Update the global active media list
+    activeMediaList = mixed.map(item => ({
+      src: item.type === 'image' ? `assets/zubosongho/images/${item.src}` : `assets/zubosongho/videos/${item.src}`,
+      type: item.type
+    }));
+    
+    mixed.forEach((item, idx) => {
+      if (item.type === 'image') {
+        itemsHTML += `
+          <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/images/${item.src}', 'image')">
+            <img src="assets/zubosongho/images/${item.src}" alt="Khaskandi Gallery Photo ${idx + 1}" loading="lazy">
+          </div>
+        `;
+      } else {
+        itemsHTML += `
+          <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/videos/${item.src}', 'video')">
+            <video src="assets/zubosongho/videos/${item.src}" preload="metadata" playsinline muted></video>
+            <div class="video-play-overlay">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" style="width: 32px; height: 32px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        `;
+      }
+    });
+  } else if (category === 'photos') {
+    const images = galleryData.images || [];
+    
+    // Update the global active media list
+    activeMediaList = images.map(img => ({
+      src: `assets/zubosongho/images/${img}`,
+      type: 'image'
+    }));
+    
+    images.forEach((img, idx) => {
+      itemsHTML += `
+        <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/images/${img}', 'image')">
+          <img src="assets/zubosongho/images/${img}" alt="Khaskandi Gallery Photo ${idx + 1}" loading="lazy">
+        </div>
+      `;
+    });
+  } else if (category === 'videos') {
+    const videos = galleryData.videos || [];
+    
+    // Update the global active media list
+    activeMediaList = videos.map(vid => ({
+      src: `assets/zubosongho/videos/${vid}`,
+      type: 'video'
+    }));
+    
+    videos.forEach(vid => {
+      itemsHTML += `
+        <div class="gallery-item" style="cursor: pointer;" onclick="openLightbox('assets/zubosongho/videos/${vid}', 'video')">
+          <video src="assets/zubosongho/videos/${vid}" preload="metadata" playsinline muted></video>
+          <div class="video-play-overlay">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#fff" style="width: 32px; height: 32px;"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  grid.innerHTML = itemsHTML;
+};
 
 // ===== Active Tournament Event Fetching =====
 let activeEventData = null;
@@ -427,6 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateLanguage();
   loadPlayers();
   loadActiveEvent();
+  loadGallery();
   handleScroll(); // Initialize navbar scroll state on load
   
   // Bulletproof Background Video Autoreplay Loop
@@ -787,4 +995,273 @@ document.getElementById('contactForm')?.addEventListener('submit', (e) => {
   btn.style.background = 'var(--accent)';
   setTimeout(() => { btn.textContent = 'Send Message'; btn.style.background = ''; e.target.reset(); }, 2500);
 });
+
+// ===== Copy Tournament Link Handler =====
+window.copyTournamentLink = function(btn) {
+  const url = window.location.origin + window.location.pathname + '#tournament';
+  navigator.clipboard.writeText(url).then(() => {
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    btn.style.borderColor = "rgba(34, 197, 94, 0.5)";
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+      btn.style.borderColor = "rgba(255, 255, 255, 0.1)";
+    }, 2000);
+  }).catch(err => console.error('Failed to copy', err));
+};
+
+// ===== Frosted Glass Lightbox Handler =====
+let currentLightboxIndex = 0;
+let lightboxMediaList = [];
+
+// ===== Frosted Glass Lightbox Handler =====
+window.openLightbox = function(src, type = 'image') {
+  let lightbox = document.getElementById('gallery-lightbox');
+  
+  // Set active media navigation list
+  lightboxMediaList = activeMediaList || [];
+  currentLightboxIndex = lightboxMediaList.findIndex(item => item.src === src);
+  if (currentLightboxIndex === -1) {
+    lightboxMediaList = [{ src, type }];
+    currentLightboxIndex = 0;
+  }
+
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.id = 'gallery-lightbox';
+    lightbox.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 12, 0.92);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      cursor: zoom-out;
+    `;
+    
+    const img = document.createElement('img');
+    img.id = 'lightbox-img';
+    img.style.cssText = `
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: none;
+    `;
+    
+    const video = document.createElement('video');
+    video.id = 'lightbox-video';
+    video.controls = true;
+    video.style.cssText = `
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: none;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'lightbox-close-btn';
+    closeBtn.innerHTML = '&times;';
+    
+    const downloadBtn = document.createElement('a');
+    downloadBtn.className = 'lightbox-download-btn';
+    downloadBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      <span class="dl-text">Download</span>
+    `;
+
+    // Responsive Arrow Navigation Buttons
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'lightbox-nav-btn prev';
+    prevBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    `;
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'lightbox-nav-btn next';
+    nextBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    `;
+    
+    const navigateLightbox = (dir) => {
+      if (lightboxMediaList.length <= 1) return;
+      currentLightboxIndex += dir;
+      if (currentLightboxIndex < 0) currentLightboxIndex = lightboxMediaList.length - 1;
+      if (currentLightboxIndex >= lightboxMediaList.length) currentLightboxIndex = 0;
+      showLightboxMedia();
+    };
+    
+    prevBtn.onclick = (e) => {
+      e.stopPropagation();
+      navigateLightbox(-1);
+    };
+    nextBtn.onclick = (e) => {
+      e.stopPropagation();
+      navigateLightbox(1);
+    };
+    
+    // Swipe Touch Gestures for Mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    lightbox.ontouchstart = (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    };
+    
+    lightbox.ontouchend = (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diffX = touchEndX - touchStartX;
+      const threshold = 50; // swipe minimum offset
+      if (Math.abs(diffX) > threshold) {
+        if (diffX < 0) {
+          navigateLightbox(1); // Swipe left -> Next
+        } else {
+          navigateLightbox(-1); // Swipe right -> Prev
+        }
+      }
+    };
+    
+    // Keyboard navigation binds
+    const handleKeydown = (e) => {
+      if (lightbox.style.display === 'flex') {
+        if (e.key === 'ArrowLeft') {
+          navigateLightbox(-1);
+        } else if (e.key === 'ArrowRight') {
+          navigateLightbox(1);
+        } else if (e.key === 'Escape') {
+          closeLightbox();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    
+    // Stop lightbox closing when clicking inside the media elements or download button
+    img.onclick = (e) => e.stopPropagation();
+    video.onclick = (e) => e.stopPropagation();
+    downloadBtn.onclick = (e) => e.stopPropagation();
+    
+    lightbox.appendChild(img);
+    lightbox.appendChild(video);
+    lightbox.appendChild(closeBtn);
+    lightbox.appendChild(downloadBtn);
+    lightbox.appendChild(prevBtn);
+    lightbox.appendChild(nextBtn);
+    document.body.appendChild(lightbox);
+    
+    const closeLightbox = () => {
+      lightbox.style.opacity = '0';
+      img.style.transform = 'scale(0.95)';
+      video.style.transform = 'scale(0.95)';
+      video.pause();
+      // Restore background body scrolling
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        lightbox.style.display = 'none';
+      }, 300);
+    };
+    
+    lightbox.onclick = closeLightbox;
+    closeBtn.onclick = (e) => {
+      e.stopPropagation();
+      closeLightbox();
+    };
+  }
+
+  // Active rendering pipeline
+  const showLightboxMedia = () => {
+    const item = lightboxMediaList[currentLightboxIndex];
+    if (!item) return;
+    
+    const img = lightbox.querySelector('#lightbox-img');
+    const video = lightbox.querySelector('#lightbox-video');
+    const downloadBtn = lightbox.querySelector('.lightbox-download-btn');
+    const dlText = downloadBtn.querySelector('.dl-text');
+    const prevBtn = lightbox.querySelector('.lightbox-nav-btn.prev');
+    const nextBtn = lightbox.querySelector('.lightbox-nav-btn.next');
+    
+    // Set up download attributes
+    downloadBtn.href = item.src;
+    const filename = item.src.substring(item.src.lastIndexOf('/') + 1);
+    downloadBtn.setAttribute('download', filename);
+    
+    if (item.type === 'video') {
+      img.style.display = 'none';
+      video.style.display = 'block';
+      video.src = item.src;
+      video.load();
+      video.play();
+      dlText.textContent = currentLang === 'en' ? 'Download Video' : 'ভিডিও ডাউনলোড করুন';
+    } else {
+      video.style.display = 'none';
+      video.pause();
+      img.style.display = 'block';
+      img.src = item.src;
+      dlText.textContent = currentLang === 'en' ? 'Download Image' : 'ছবি ডাউনলোড করুন';
+    }
+    
+    // Update Arrow Visibilities
+    if (lightboxMediaList.length <= 1) {
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+    } else {
+      if (prevBtn) prevBtn.style.display = 'flex';
+      if (nextBtn) nextBtn.style.display = 'flex';
+    }
+    
+    // Dynamic transition scaling triggers
+    img.style.transform = 'scale(0.95)';
+    video.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      img.style.transform = 'scale(1)';
+      video.style.transform = 'scale(1)';
+    }, 50);
+  };
+
+  // Block background body scrolling when lightbox is active
+  document.body.style.overflow = 'hidden';
+  
+  // Render active item
+  showLightboxMedia();
+  
+  lightbox.style.display = 'flex';
+  // Trigger reflow
+  lightbox.offsetHeight;
+  lightbox.style.opacity = '1';
+};
+
+// ===== Citations Collapsible Accordion =====
+window.toggleCitations = function() {
+  const trigger = document.querySelector('.citations-trigger');
+  const panel = document.getElementById('citations-panel');
+  if (!trigger || !panel) return;
+  
+  const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+  trigger.setAttribute('aria-expanded', !isExpanded);
+  
+  if (!isExpanded) {
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+    panel.style.opacity = '1';
+    panel.style.marginTop = '1.5rem';
+  } else {
+    panel.style.maxHeight = '0';
+    panel.style.opacity = '0';
+    panel.style.marginTop = '0';
+  }
+};
 

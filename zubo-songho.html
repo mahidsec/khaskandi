@@ -200,8 +200,11 @@
 <!-- Tournament Section -->
 <section class="section section-alt" id="tournament">
 <div class="container">
-  <div class="section-header reveal">
-    <h2 class="section-title" data-en="Tournament" data-bn="টুর্নামেন্ট" style="color: var(--accent); font-weight: 600; letter-spacing: -1px;">টুর্নামেন্ট</h2>
+  <div class="section-header reveal" style="display: flex; justify-content: center; align-items: center; gap: 0.6rem; margin-bottom: 3rem;">
+    <h2 class="section-title" data-en="Tournament" data-bn="টুর্নামেন্ট" style="color: var(--accent); font-weight: 600; letter-spacing: -1px; margin: 0;">টুর্নামেন্ট</h2>
+    <button onclick="copyTournamentLink(this)" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: all 0.2s;" title="Copy Link" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+    </button>
   </div>
   <div id="event-container" class="reveal">
     <!-- Loaded dynamically from event.json -->
@@ -209,22 +212,72 @@
 </div>
 </section>
 
+<!-- Gallery Section -->
+<section class="section" id="gallery">
+<div class="container">
+  <div class="section-header reveal" style="display: flex; justify-content: center; align-items: center; gap: 0.6rem; margin-bottom: 3rem;">
+    <h2 class="section-title" data-en="Media Gallery" data-bn="মিডিয়া গ্যালারি" style="color: var(--accent); font-weight: 600; letter-spacing: -1px; margin: 0;">মিডিয়া গ্যালারি</h2>
+  </div>
+  
+  <div class="reveal">
+    <div id="gallery-preview-grid" class="gallery-grid">
+      <!-- Mixed photos and videos + a "+" card loaded dynamically -->
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Full Gallery Explorer Modal -->
+<div id="gallery-explorer-modal" class="explorer-modal" style="display: none;">
+  <div class="explorer-content">
+    <div class="explorer-header">
+      <h2 data-en="Media Explorer" data-bn="মিডিয়া গ্যালারি">মিডিয়া গ্যালারি</h2>
+      <div class="tab-bar">
+        <button class="filter-btn active" onclick="filterExplorer('all', this)" data-en="All" data-bn="সব">সব</button>
+        <button class="filter-btn" onclick="filterExplorer('photos', this)" data-en="Photos" data-bn="ছবিসমূহ">ছবিসমূহ</button>
+        <button class="filter-btn" onclick="filterExplorer('videos', this)" data-en="Videos" data-bn="ভিডিওসমূহ">ভিডিওসমূহ</button>
+      </div>
+      <button class="explorer-close" onclick="closeGalleryExplorer()">&times;</button>
+    </div>
+    <div class="explorer-grid-wrapper">
+      <div id="explorer-grid" class="gallery-grid">
+        <!-- Dynamically filtered content -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer class="footer">
 <div class="container">
   <div class="footer-grid">
     <div class="footer-about">
-      <div class="nav-logo" style="margin-bottom:.8rem">খাসকান্দি</div>
-      <p data-en="Official Youth Association of Khaskandi Village." data-bn="খাসকান্দি গ্রামের অফিসিয়াল যুব সংগঠন।">খাসকান্দি গ্রামের অফিসিয়াল যুব সংগঠন।</p>
+      <a href="zubo-songho.html" class="footer-logo-link" style="display: inline-block; margin-bottom: 1rem;">
+        <img src="assets/zubosongho/images/logo.png" alt="Khaskandi Zubo Songho Logo" style="height: 48px; width: auto; object-fit: contain; border-radius: 4px;">
+      </a>
+      
+      <!-- Social Media Links -->
+      <div class="footer-socials">
+        <a href="https://www.facebook.com/profile.php?id=61579283005777" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        </a>
+      </div>
     </div>
+    
     <div class="footer-col">
       <h4 data-en="Quick Links" data-bn="দ্রুত লিঙ্ক">দ্রুত লিঙ্ক</h4>
       <a href="index.html" data-en="Main Website" data-bn="মূল ওয়েবসাইট">মূল ওয়েবসাইট</a>
       <a href="#about" data-en="About Us" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</a>
       <a href="#tournament" data-en="Tournament" data-bn="টুর্নামেন্ট">টুর্নামেন্ট</a>
+    </div>
+    
+    <div class="footer-col">
+      <h4 data-en="Association" data-bn="সংগঠন">সংগঠন</h4>
+      <a href="#gallery" data-en="Media Gallery" data-bn="মিডিয়া গ্যালারি">মিডিয়া গ্যালারি</a>
       <a href="#squad" data-en="Squad Registry" data-bn="স্কোয়াড তালিকা">স্কোয়াড তালিকা</a>
     </div>
   </div>
+  
   <div class="footer-bottom">
     <span data-en="© 2026 Khaskandi Zubo Songho. All rights reserved." data-bn="© ২০২৬ খাসকান্দি যুব সংঘ। সর্বস্বত্ব সংরক্ষিত।">© ২০২৬ খাসকান্দি যুব সংঘ। সর্বস্বত্ব সংরক্ষিত।</span>
   </div>
