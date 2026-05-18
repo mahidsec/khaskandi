@@ -908,7 +908,7 @@ ul { list-style: none; }
   font-family: 'Oswald', sans-serif;
   font-weight: 700;
   color: var(--accent-light);
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   letter-spacing: 0.5px;
 }
 
@@ -1062,7 +1062,7 @@ ul { list-style: none; }
     font-size: 0.72rem;
   }
   .badge-jersey {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 }
 @media (max-width: 480px) {
@@ -1858,25 +1858,36 @@ ul { list-style: none; }
     border: 1px solid #000000 !important; /* Force a clean outer table border */
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   }
   
   .player-table th, 
-  .player-table td {
+  .player-table td,
+  .player-name-cell,
+  .badge-jersey,
+  .badge-size {
     border: 1px solid #000000 !important;
     padding: 6px 10px !important;
     color: #000000 !important;
     text-align: center !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   }
   
-  /* Alternating premium grey stripes for superior readability */
-  .player-table tbody tr:nth-child(odd) td {
+  /* Force alternating premium grey stripes and override row-selected backgrounds completely */
+  .player-table tbody tr td,
+  .player-table tbody tr.row-selected td {
+    background: transparent !important;
+  }
+  .player-table tbody tr:nth-child(odd) td,
+  .player-table tbody tr.row-selected:nth-child(odd) td {
     background: #f9f9f9 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  .player-table tbody tr:nth-child(even) td {
+  .player-table tbody tr:nth-child(even) td,
+  .player-table tbody tr.row-selected:nth-child(even) td {
     background: #f0f0f0 !important; /* Slightly darker grey */
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -1890,10 +1901,12 @@ ul { list-style: none; }
   .player-table tbody tr.row-selected td:nth-child(2) {
     border: 1px solid #000000 !important;
     color: #000000 !important;
+    border-left: 1px solid #000000 !important; /* Force strip green accent left border */
   }
   
   .player-table td:nth-child(4), 
-  .player-table th:nth-child(4) {
+  .player-table th:nth-child(4),
+  .player-table td.player-name-cell {
     text-align: left !important; /* Keep Player Name column left-aligned */
   }
   
@@ -1904,6 +1917,7 @@ ul { list-style: none; }
     border-bottom: 2px solid #000000 !important; /* Prominent header border */
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
   }
   
   /* Clean bold text for Jersey and Sizes */
@@ -1916,5 +1930,6 @@ ul { list-style: none; }
     font-weight: bold !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+    text-transform: none !important; /* Retain clean standard case for sizes */
   }
 }

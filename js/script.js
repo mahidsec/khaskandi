@@ -752,15 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return a.localeCompare(b);
     });
     
-    let sizeText = 'Size Count: ';
-    const sizeParts = [];
+    let sizeHtml = 'Size Count:';
     sortedSizes.forEach(sz => {
-      sizeParts.push(`${sz}=${counts[sz]}`);
+      sizeHtml += `<br>${sz}: ${counts[sz]}`;
     });
-    sizeText += sizeParts.join(', ');
     
     const printSizeCounts = document.getElementById('printSizeCounts');
-    if (printSizeCounts) printSizeCounts.textContent = sizeText;
+    if (printSizeCounts) printSizeCounts.innerHTML = sizeHtml;
     
     // 2. Set Print Date (Always English)
     const printDate = document.getElementById('printDate');
@@ -794,7 +792,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // 4. Trigger browser native vector print dialog instantly!
+    // 4. Record current scroll position to neutralize WebKit scroll reset bugs during print jobs
+    const originalScrollY = window.scrollY;
+    
+    // 5. Trigger browser native vector print dialog instantly!
     let restored = false;
     const restoreOriginalState = () => {
       if (restored) return;
@@ -803,12 +804,20 @@ document.addEventListener('DOMContentLoaded', () => {
         cell.textContent = originalSerials[idx];
       });
       rows.forEach(row => row.classList.remove('print-hidden'));
+      
+      // Delay scroll recovery slightly to let WebKit recalculate total layout heights first!
+      setTimeout(() => {
+        window.scrollTo({
+          top: originalScrollY,
+          behavior: 'instant'
+        });
+      }, 80);
     };
 
     window.addEventListener('afterprint', restoreOriginalState);
     window.print();
     
-    // 5. Safe recovery fallback (Perfect for non-blocking WebKit/iOS Safari print spoolers!)
+    // 6. Safe recovery fallback (Perfect for non-blocking WebKit/iOS Safari print spoolers!)
     setTimeout(restoreOriginalState, 1500);
   });
 });
