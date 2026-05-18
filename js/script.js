@@ -795,13 +795,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // 4. Trigger browser native vector print dialog instantly!
+    let restored = false;
+    const restoreOriginalState = () => {
+      if (restored) return;
+      restored = true;
+      serialCells.forEach((cell, idx) => {
+        cell.textContent = originalSerials[idx];
+      });
+      rows.forEach(row => row.classList.remove('print-hidden'));
+    };
+
+    window.addEventListener('afterprint', restoreOriginalState);
     window.print();
     
-    // 5. Restore original serial numbers and display styles immediately
-    serialCells.forEach((cell, idx) => {
-      cell.textContent = originalSerials[idx];
-    });
-    rows.forEach(row => row.classList.remove('print-hidden'));
+    // 5. Safe recovery fallback (Perfect for non-blocking WebKit/iOS Safari print spoolers!)
+    setTimeout(restoreOriginalState, 1500);
   });
 });
 
