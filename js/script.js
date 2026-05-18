@@ -176,16 +176,15 @@ function renderActiveEvent() {
     const teamsVal = currentLang === 'en' ? `${activeEventData.teamsCount}` : `${activeEventData.teamsCount}টি`;
     const styleVal = currentLang === 'en' ? activeEventData.styleEn : activeEventData.styleBn;
     const playersVal = currentLang === 'en' ? `${activeEventData.playerCount}-a-side (+${activeEventData.extraPlayers} Subs)` : `${activeEventData.playerCount}-জন (অতিরিক্ত +${activeEventData.extraPlayers})`;
-    const feeVal = currentLang === 'en' ? activeEventData.entryFeeEn : activeEventData.entryFeeBn;
-    const finesVal = currentLang === 'en' ? activeEventData.fineFeeEn : activeEventData.fineFeeBn;
+    const feeVal = activeEventData.entryFee;
     const prizeFirstVal = activeEventData.prizeFirstEn; // English is standard
     const prizeSecondVal = activeEventData.prizeSecondEn; // English is standard
     let contactsHtml = '';
     if (activeEventData.contacts && activeEventData.contacts.length > 0) {
       activeEventData.contacts.forEach(contact => {
-        const contactName = currentLang === 'en' ? contact.nameEn : contact.nameBn;
-        const contactPhone = contact.phoneEn; // Standard English format for phone display
-        const cleanPhone = contact.phoneEn.replace(/[\s-]+/g, '');
+        const contactName = contact.name;
+        const contactPhone = contact.phone; // Standard format for phone display
+        const cleanPhone = contact.phone.replace(/[\s-]+/g, '');
         
         contactsHtml += `
           <a href="tel:${cleanPhone}" class="t-contact-pill">
@@ -290,16 +289,16 @@ function renderActiveEvent() {
             <!-- Card Fines Callout -->
             <div style="display: flex; flex-direction: column; gap: 0.6rem; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 1.2rem; margin-bottom: 2.5rem;">
               <span style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700; letter-spacing: 1px; display: block;">
-                ${labelFines}
+                Card Penalties
               </span>
               <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); align-items: center; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                   <div style="width: 10px; height: 14px; background: #eab308; border-radius: 2px;"></div>
-                  <span>${currentLang === 'en' ? 'Yellow Card: ৳100' : 'হলুদ কার্ড: ৳১০০'}</span>
+                  <span>Yellow Card: ${activeEventData.yellowCardFine}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                   <div style="width: 10px; height: 14px; background: #ef4444; border-radius: 2px;"></div>
-                  <span>${currentLang === 'en' ? 'Red Card: ৳200' : 'লাল কার্ড: ৳২০০'}</span>
+                  <span>Red Card: ${activeEventData.redCardFine}</span>
                 </div>
               </div>
             </div>

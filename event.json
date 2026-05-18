@@ -1,30 +1,27 @@
 {
   "eventActive": true,
-  "titleEn": "Munshiganj Gold Cup 2026",
-  "titleBn": "মুন্সীগঞ্জ গোল্ড কাপ ২০২৬",
-  "dateEn": "Starts June 10, 2026",
-  "dateBn": "১০ জুন, ২০২৬ থেকে শুরু",
+  "titleEn": "Shaheed Zia Smrity Football Tournament 2026",
+  "titleBn": "শহীদ জিয়া স্মৃতি ফুটবল টুর্নামেন্ট ২০২৬",
+  "dateEn": "Starts January 20, 2026",
+  "dateBn": "২০ জানুয়ারি, ২০২৬ থেকে শুরু",
   "teamsCount": 16,
   "styleEn": "Knockout",
   "styleBn": "নকআউট",
   "playerCount": 9,
   "extraPlayers": 4,
-  "entryFeeEn": "৳1,500 per team",
-  "entryFeeBn": "৳১,৫০০ (প্রতি দল)",
-  "fineFeeEn": "Yellow: ৳100, Red: ৳200",
-  "fineFeeBn": "হলুদ কার্ড: ৳১০০, লাল কার্ড: ৳২০০",
-  "prizeFirstEn": "৳50,000 + Trophy",
-  "prizeSecondEn": "৳30,000 + Trophy",
+  "entryFee": "৳1,500",
+  "yellowCardFine": "৳300",
+  "redCardFine": "৳500",
+  "prizeFirstEn": "Fridge",
+  "prizeSecondEn": "TV",
   "contacts": [
     {
-      "nameEn": "Rahim (Organizer)",
-      "nameBn": "রহিম (আয়োজক)",
-      "phoneEn": "+880 1712-345678"
+      "name": "Hossain",
+      "phone": "+88018xxxxxxxx"
     },
     {
-      "nameEn": "Karim (Co-Organizer)",
-      "nameBn": "করিম (সহ-আয়োজক)",
-      "phoneEn": "+880 1798-765432"
+      "name": "Asraful",
+      "phone": "+88018xxxxxxxx"
     }
   ],
   "rulesEn": [
