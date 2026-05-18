@@ -108,6 +108,10 @@ function updateLanguage() {
   document.querySelectorAll('[data-en][data-bn]').forEach(el => {
     el.innerHTML = el.dataset[currentLang];
   });
+  // Dynamic Input Placeholder Translation
+  document.querySelectorAll('input[data-placeholder-en][data-placeholder-bn]').forEach(el => {
+    el.placeholder = el.dataset['placeholder' + (currentLang === 'en' ? 'En' : 'Bn')];
+  });
   renderPlayers();
   renderActiveEvent();
   renderGallery();
@@ -120,6 +124,7 @@ langBtn?.addEventListener('click', () => {
 
 // ===== Player Squad Fetching & Dynamic Table =====
 let playersData = [];
+let filteredPlayersList = [];
 
 async function loadPlayers() {
   try {
@@ -128,6 +133,7 @@ async function loadPlayers() {
     const data = await res.json();
     // Sort numerically by Jersey number ascending
     playersData = data.sort((a, b) => Number(a.jersey) - Number(b.jersey));
+    filteredPlayersList = [...playersData];
     renderPlayers();
   } catch (err) {
     console.error('Error loading squad database:', err);
@@ -542,7 +548,19 @@ function renderPlayers() {
   
   tbody.innerHTML = '';
   
-  playersData.forEach((player, index) => {
+  if (filteredPlayersList.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 0.95rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: rgba(255, 255, 255, 0.25); margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span data-en="No players found matching your search." data-bn="আপনার অনুসন্ধানের সাথে মিলে এমন কোনো খেলোয়াড় পাওয়া যায়নি।">${currentLang === 'en' ? 'No players found matching your search.' : 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো খেলোয়াড় পাওয়া যায়নি।'}</span>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    return;
+  }
+  
+  filteredPlayersList.forEach((player, index) => {
     const tr = document.createElement('tr');
     tr.style.cursor = 'pointer'; // Indicate entire row is clickable
     
@@ -636,6 +654,16 @@ document.addEventListener('DOMContentLoaded', () => {
   loadActiveEvent();
   loadGallery();
   handleScroll(); // Initialize navbar scroll state on load
+
+  // Squad Search Filter Event Trigger
+  const searchInput = document.getElementById('playerSearchInput');
+  searchInput?.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    filteredPlayersList = playersData.filter(player => {
+      return player.name.toLowerCase().includes(query) || player.jersey.toLowerCase().includes(query);
+    });
+    renderPlayers();
+  });
   
   // Bulletproof Background Video Autoreplay Loop
   document.querySelectorAll('video').forEach(video => {
@@ -647,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // CSV Downloader trigger
   document.getElementById('downloadCsvBtn')?.addEventListener('click', () => {
-    if (playersData.length === 0) return;
+    if (filteredPlayersList.length === 0) return;
     
     const checkboxes = document.querySelectorAll('.player-select-checkbox');
     const checked = document.querySelectorAll('.player-select-checkbox:checked');
@@ -657,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let csv = "Serial,Jersey No.,Player Name,Size\n";
     let targetIndex = 1;
     
-    playersData.forEach((p, idx) => {
+    filteredPlayersList.forEach((p, idx) => {
       // If there is a selection, skip unselected rows
       if (hasSelection && !checkboxes[idx]?.checked) return;
       
@@ -681,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // PDF Downloader trigger (Print-Ready PDF)
   document.getElementById('downloadPdfBtn')?.addEventListener('click', () => {
     const element = document.querySelector('.table-wrapper');
-    if (!element || playersData.length === 0) return;
+    if (!element || filteredPlayersList.length === 0) return;
     
     const btn = document.getElementById('downloadPdfBtn');
     const originalText = btn.innerHTML;
@@ -751,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Count sizes dynamically based on target printed players!
             const counts = {};
-            playersData.forEach((p, idx) => {
+            filteredPlayersList.forEach((p, idx) => {
               // Skip unselected players if selection exists
               if (hasSelection && !originalCheckboxes[idx]?.checked) return;
               

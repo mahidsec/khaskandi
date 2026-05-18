@@ -1703,3 +1703,59 @@ ul { list-style: none; }
     display: none !important;
   }
 }
+
+/* Player Squad Search Bar */
+.squad-search-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+.search-input-wrapper .search-icon {
+  position: absolute;
+  left: 14px;
+  top: calc(50% - 8px); /* Center mathematically to prevent sub-pixel GPU blur */
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  transition: color 0.3s ease;
+  z-index: 2; /* Sits cleanly on top of the input, avoiding the backdrop-filter blur! */
+}
+.search-input-wrapper input {
+  width: 100%;
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.search-input-wrapper input:focus {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+}
+.search-input-wrapper input:focus + .search-icon {
+  color: var(--accent);
+}
+
+@media (max-width: 576px) {
+  .squad-search-container {
+    justify-content: center;
+  }
+  .search-input-wrapper {
+    max-width: 100%;
+  }
+}
