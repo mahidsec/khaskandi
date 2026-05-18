@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap');
+
 /* ===== CSS Variables & Reset ===== */
 :root {
   --primary: #16a34a;
@@ -891,9 +893,9 @@ ul { list-style: none; }
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
-  font-family: var(--font-en), sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
   letter-spacing: 0.5px;
   transition: all var(--transition);
 }
@@ -903,12 +905,21 @@ ul { list-style: none; }
   color: var(--accent-light);
 }
 .badge-jersey {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+  font-family: 'Oswald', sans-serif;
   font-weight: 700;
   color: var(--accent-light);
-  font-size: 1.15rem;
-  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem;
   letter-spacing: 0.5px;
+}
+
+/* Premium Player Name Styling with Sporty Vibe */
+.player-name-cell {
+  font-family: 'Oswald', sans-serif !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.75px !important;
+  font-size: 0.98rem !important;
+  color: var(--text-primary) !important;
 }
 
 /* Premium Checkbox Custom Styling */
@@ -1377,7 +1388,7 @@ ul { list-style: none; }
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(10, 10, 12, 0.95);
+  background: rgba(10, 26, 18, 0.97); /* Official dark brand green overlay */
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   display: flex;
@@ -1388,8 +1399,8 @@ ul { list-style: none; }
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .explorer-content {
-  background: rgba(18, 18, 22, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 42, 28, 0.85); /* Luxurious forest green glassmorphic backdrop */
+  border: 1px solid rgba(22, 163, 74, 0.25); /* Subtle green border */
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -1408,7 +1419,7 @@ ul { list-style: none; }
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(22, 163, 74, 0.2); /* Clean green separator line */
   padding-bottom: 1rem; /* Compact padding */
   position: relative;
 }
@@ -1420,8 +1431,8 @@ ul { list-style: none; }
   margin: 0;
 }
 .explorer-close {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(22, 163, 74, 0.25);
   color: #fff;
   font-size: 1.6rem;
   width: 38px; /* Slightly more compact close button */
@@ -1440,8 +1451,8 @@ ul { list-style: none; }
   transform: rotate(90deg);
 }
 .tab-bar {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(10, 26, 18, 0.6); /* Forest green tab bar background */
+  border: 1px solid rgba(22, 163, 74, 0.2);
   padding: 3px;
   border-radius: 10px;
   display: inline-flex;
@@ -1463,8 +1474,8 @@ ul { list-style: none; }
   color: #fff;
 }
 .filter-btn.active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(22, 163, 74, 0.2); /* Active state green background */
+  border-color: rgba(22, 163, 74, 0.4); /* Stronger active border */
   color: var(--accent);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -1500,15 +1511,15 @@ ul { list-style: none; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, rgba(16, 42, 28, 0.4) 0%, rgba(10, 26, 18, 0.15) 100%);
+  border: 1px dashed rgba(22, 163, 74, 0.3);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   aspect-ratio: 4 / 3;
 }
 .gallery-more-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(16, 42, 28, 0.7);
   border-color: var(--accent);
   transform: translateY(-4px);
 }
@@ -1745,7 +1756,7 @@ ul { list-style: none; }
 .search-input-wrapper input:focus {
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--accent);
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 .search-input-wrapper input:focus + .search-icon {
   color: var(--accent);
@@ -1757,5 +1768,153 @@ ul { list-style: none; }
   }
   .search-input-wrapper {
     max-width: 100%;
+  }
+}
+
+/* Native Print Layout for High-Definition Vector PDFs & Paper Prints */
+@media print {
+  /* Hide all website page segments except the squad container */
+  body > *:not(#squad), 
+  header, 
+  footer, 
+  nav, 
+  .hero-section, 
+  .about-section, 
+  .citations, 
+  .section-header,
+  .squad-search-container,
+  #downloadCsvBtn,
+  #downloadPdfBtn {
+    display: none !important;
+  }
+  
+  /* Strip native browser headers/footers (title, date, URL, page number) */
+  @page {
+    margin: 0;
+  }
+  
+  /* Reset margins for clean margins on hard-copy paper sizes */
+  html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 1.6cm !important; /* Forces a perfect, centered physical sheet margin */
+    padding: 0 !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  #squad {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    position: static !important;
+  }
+  
+  /* Display print-only header elements */
+  .print-only-header {
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  /* Strip select column from printable documents */
+  .player-table th:first-child, 
+  .player-table td:first-child {
+    display: none !important;
+  }
+  
+  /* Hide unselected players in print layout */
+  .player-table tbody tr.print-hidden {
+    display: none !important;
+  }
+  
+  /* Flat white container style */
+  .table-wrapper {
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  
+  .player-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    border: 1px solid #000000 !important; /* Force a clean outer table border */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .player-table th, 
+  .player-table td {
+    border: 1px solid #000000 !important;
+    padding: 6px 10px !important;
+    color: #000000 !important;
+    text-align: center !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Alternating premium grey stripes for superior readability */
+  .player-table tbody tr:nth-child(odd) td {
+    background: #f9f9f9 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .player-table tbody tr:nth-child(even) td {
+    background: #f0f0f0 !important; /* Slightly darker grey */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Reset selection indicators and last-row border anomalies */
+  .player-table tr td,
+  .player-table tr:last-child td,
+  .player-table tbody tr.row-selected td,
+  .player-table tbody tr.row-selected td:first-child,
+  .player-table tbody tr.row-selected td:nth-child(2) {
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+  }
+  
+  .player-table td:nth-child(4), 
+  .player-table th:nth-child(4) {
+    text-align: left !important; /* Keep Player Name column left-aligned */
+  }
+  
+  .player-table th {
+    font-weight: bold !important;
+    background: #f2f2f2 !important;
+    text-transform: uppercase !important;
+    border-bottom: 2px solid #000000 !important; /* Prominent header border */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Clean bold text for Jersey and Sizes */
+  .badge-jersey, 
+  .badge-size {
+    background: transparent !important;
+    border: none !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
   }
 }

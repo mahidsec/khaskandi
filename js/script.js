@@ -132,7 +132,10 @@ async function loadPlayers() {
     if (!res.ok) throw new Error('Failed to fetch player database (squad.json)');
     const data = await res.json();
     // Sort numerically by Jersey number ascending
-    playersData = data.sort((a, b) => Number(a.jersey) - Number(b.jersey));
+    playersData = data.sort((a, b) => Number(a.jersey) - Number(b.jersey)).map(p => ({
+      ...p,
+      selected: false
+    }));
     filteredPlayersList = [...playersData];
     renderPlayers();
   } catch (err) {
@@ -571,12 +574,25 @@ function renderPlayers() {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.className = 'player-select-checkbox';
+    checkbox.checked = !!player.selected;
+    if (player.selected) {
+      tr.classList.add('row-selected');
+    }
+    
+    const updatePlayerSelection = (isSelected) => {
+      player.selected = isSelected;
+      const mainPlayer = playersData.find(p => p.jersey === player.jersey);
+      if (mainPlayer) {
+        mainPlayer.selected = isSelected;
+      }
+      tr.classList.toggle('row-selected', isSelected);
+      updateSelectAllState();
+    };
     
     // Checkbox directly clicked
     checkbox.addEventListener('click', (e) => {
       e.stopPropagation(); // Avoid double toggling via row's click listener
-      tr.classList.toggle('row-selected', checkbox.checked);
-      updateSelectAllState();
+      updatePlayerSelection(checkbox.checked);
     });
     
     tdSelect.appendChild(checkbox);
@@ -585,8 +601,7 @@ function renderPlayers() {
     // Click anywhere on row to select
     tr.addEventListener('click', () => {
       checkbox.checked = !checkbox.checked;
-      tr.classList.toggle('row-selected', checkbox.checked);
-      updateSelectAllState();
+      updatePlayerSelection(checkbox.checked);
     });
     
     // 2. Count / Serial (Strictly English)
@@ -604,7 +619,7 @@ function renderPlayers() {
     
     // 4. Player Name (Strictly English)
     const tdName = document.createElement('td');
-    tdName.style.color = 'var(--text-primary)';
+    tdName.className = 'player-name-cell';
     tdName.textContent = player.name;
     tr.appendChild(tdName);
     
@@ -620,20 +635,27 @@ function renderPlayers() {
   // Master Select All toggle binding
   const selectAllCb = document.getElementById('selectAllCheckbox');
   if (selectAllCb) {
-    selectAllCb.checked = false;
-    selectAllCb.indeterminate = false;
-    
     // Clear old listeners by cloning
     const newSelectAll = selectAllCb.cloneNode(true);
     selectAllCb.parentNode.replaceChild(newSelectAll, selectAllCb);
     
     newSelectAll.addEventListener('change', () => {
+      const isChecked = newSelectAll.checked;
+      filteredPlayersList.forEach(player => {
+        player.selected = isChecked;
+        const mainPlayer = playersData.find(p => p.jersey === player.jersey);
+        if (mainPlayer) mainPlayer.selected = isChecked;
+      });
+      
       const checkboxes = document.querySelectorAll('.player-select-checkbox');
       checkboxes.forEach(cb => {
-        cb.checked = newSelectAll.checked;
-        cb.closest('tr')?.classList.toggle('row-selected', cb.checked);
+        cb.checked = isChecked;
+        cb.closest('tr')?.classList.toggle('row-selected', isChecked);
       });
     });
+    
+    // Initialize correct select all state based on visible checkboxes
+    updateSelectAllState();
   }
 }
 
@@ -677,17 +699,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('downloadCsvBtn')?.addEventListener('click', () => {
     if (filteredPlayersList.length === 0) return;
     
-    const checkboxes = document.querySelectorAll('.player-select-checkbox');
-    const checked = document.querySelectorAll('.player-select-checkbox:checked');
-    const hasSelection = checked.length > 0;
+    const hasSelection = filteredPlayersList.some(p => p.selected);
     
     // Generate valid CSV content
     let csv = "Serial,Jersey No.,Player Name,Size\n";
     let targetIndex = 1;
     
-    filteredPlayersList.forEach((p, idx) => {
+    filteredPlayersList.forEach((p) => {
       // If there is a selection, skip unselected rows
-      if (hasSelection && !checkboxes[idx]?.checked) return;
+      if (hasSelection && !p.selected) return;
       
       // Escape commas or double-quotes inside names
       const name = `"${p.name.replace(/"/g, '""')}"`;
@@ -708,310 +728,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // PDF Downloader trigger (Print-Ready PDF)
   document.getElementById('downloadPdfBtn')?.addEventListener('click', () => {
-    const element = document.querySelector('.table-wrapper');
-    if (!element || filteredPlayersList.length === 0) return;
+    if (filteredPlayersList.length === 0) return;
     
-    const btn = document.getElementById('downloadPdfBtn');
-    const originalText = btn.innerHTML;
+    const hasSelection = filteredPlayersList.some(p => p.selected);
     
-    // Premium dynamic spinner state
-    btn.innerHTML = `
-      <svg class="animate-spin" style="animation: spin 1s linear infinite; width: 15px; height: 15px; margin-right: 8px; stroke: currentColor;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10" style="opacity:0.25;"></circle><path d="M4 12a8 8 0 0 1 8-8V0C5.37 0 0 5.37 0 12h4z" fill="currentColor"></path></svg>
-      <span>Generating PDF...</span>
-    `;
-    btn.disabled = true;
-
-    const runExport = () => {
-      window.html2canvas(element, {
-        backgroundColor: '#ffffff', // Pure white background for cost-effective printing!
-        scale: 2.5, // Ultra-high resolution print-ready scale!
-        useCORS: true,
-        logging: false,
-        windowWidth: 1024, // Render as if on a 1024px wide desktop viewport!
-        onclone: (clonedDoc) => {
-          // Force standard desktop document boundaries inside the virtual clone document
-          clonedDoc.documentElement.style.width = '1024px';
-          clonedDoc.body.style.width = '1024px';
-          clonedDoc.body.style.overflow = 'visible';
-
-          const wrapper = clonedDoc.querySelector('.table-wrapper');
-          if (wrapper) {
-            // Apply pristine monochrome black-and-white styling
-            wrapper.style.width = '960px'; // Lock a broad, perfect desktop table width in memory!
-            wrapper.style.margin = '0 auto';
-            wrapper.style.background = '#ffffff';
-            wrapper.style.boxShadow = 'none';
-            wrapper.style.border = 'none'; // REMOVE heavy outer border near edge!
-            wrapper.style.borderRadius = '0';
-            wrapper.style.padding = '0'; // Flat clean edge table!
-
-            const clonedRows = wrapper.querySelectorAll('tbody tr');
-            const originalCheckboxes = document.querySelectorAll('.player-select-checkbox');
-            const hasSelection = document.querySelectorAll('.player-select-checkbox:checked').length > 0;
-
-            // 1. If there is a selection, remove unselected rows in the clone
-            if (hasSelection) {
-              originalCheckboxes.forEach((cb, idx) => {
-                if (!cb.checked) {
-                  const rowToRemove = clonedRows[idx];
-                  if (rowToRemove) {
-                    rowToRemove.parentNode.removeChild(rowToRemove);
-                  }
-                }
-              });
-            }
-
-            // 2. STRIP Select Checkbox Column entirely from the printable document!
-            wrapper.querySelectorAll('tr').forEach(tr => {
-              const firstCell = tr.firstElementChild;
-              if (firstCell) {
-                firstCell.parentNode.removeChild(firstCell);
-              }
-            });
-
-            // 3. Sequentially re-number serials (#) for remaining printed rows (from 1 to N)!
-            wrapper.querySelectorAll('tbody tr').forEach((tr, newIdx) => {
-              const serialCell = tr.firstElementChild;
-              if (serialCell) {
-                serialCell.textContent = newIdx + 1;
-              }
-            });
-
-            // Count sizes dynamically based on target printed players!
-            const counts = {};
-            filteredPlayersList.forEach((p, idx) => {
-              // Skip unselected players if selection exists
-              if (hasSelection && !originalCheckboxes[idx]?.checked) return;
-              
-              const sz = (p.size || '').toUpperCase().trim();
-              if (sz) {
-                counts[sz] = (counts[sz] || 0) + 1;
-              }
-            });
-
-            const sizeOrder = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', '3XL'];
-            const sortedSizes = Object.keys(counts).sort((a, b) => {
-              const idxA = sizeOrder.indexOf(a);
-              const idxB = sizeOrder.indexOf(b);
-              if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-              if (idxA !== -1) return -1;
-              if (idxB !== -1) return 1;
-              return a.localeCompare(b);
-            });
-
-            // Inject premium side-by-side header block at the top of the PDF!
-            const headerBlock = clonedDoc.createElement('div');
-            headerBlock.style.width = '100%';
-            headerBlock.style.marginBottom = '1.5rem'; // Margin to table content below
-
-            const headerTable = clonedDoc.createElement('table');
-            headerTable.style.width = '100%';
-            headerTable.style.borderCollapse = 'collapse';
-            headerTable.style.border = 'none';
-
-            const hRow = clonedDoc.createElement('tr');
-
-            // 1. Left Cell (Size Count Block - Slightly Bigger)
-            const leftTd = clonedDoc.createElement('td');
-            leftTd.style.width = '30%';
-            leftTd.style.textAlign = 'left';
-            leftTd.style.verticalAlign = 'top';
-            leftTd.style.border = 'none';
-            leftTd.style.padding = '0';
-
-            const sizeCountDiv = clonedDoc.createElement('div');
-            sizeCountDiv.style.textAlign = 'left';
-            sizeCountDiv.style.fontSize = '12px'; // Slightly bigger! (increased from 10px)
-            sizeCountDiv.style.lineHeight = '1.4';
-            sizeCountDiv.style.color = '#000000';
-            sizeCountDiv.style.fontFamily = 'sans-serif';
-
-            const sizeLabel = clonedDoc.createElement('div');
-            sizeLabel.textContent = 'Size Count:';
-            sizeLabel.style.fontWeight = '700';
-            sizeLabel.style.textTransform = 'uppercase';
-            sizeLabel.style.letterSpacing = '0.5px';
-            sizeLabel.style.marginBottom = '4px';
-            sizeCountDiv.appendChild(sizeLabel);
-
-            sortedSizes.forEach(sz => {
-              const sizeRow = clonedDoc.createElement('div');
-              sizeRow.textContent = `${sz} = ${counts[sz]}`;
-              sizeCountDiv.appendChild(sizeRow);
-            });
-            leftTd.appendChild(sizeCountDiv);
-
-            // 2. Center Cell (Club Title - Centered)
-            const centerTd = clonedDoc.createElement('td');
-            centerTd.style.width = '40%';
-            centerTd.style.textAlign = 'center';
-            centerTd.style.verticalAlign = 'top';
-            centerTd.style.border = 'none';
-            centerTd.style.padding = '0';
-
-            const title = clonedDoc.createElement('h1');
-            title.textContent = 'Khaskandi Zubo Songho';
-            title.style.fontSize = '22px'; // Perfectly proportioned for center column
-            title.style.fontWeight = '800';
-            title.style.color = '#000000';
-            title.style.textTransform = 'uppercase';
-            title.style.letterSpacing = '1px';
-            title.style.margin = '0';
-            title.style.fontFamily = 'Georgia, serif';
-            title.style.textAlign = 'center';
-            centerTd.appendChild(title);
-
-            // 3. Right Cell (Today's Date Block)
-            const rightTd = clonedDoc.createElement('td');
-            rightTd.style.width = '30%';
-            rightTd.style.textAlign = 'right';
-            rightTd.style.verticalAlign = 'top';
-            rightTd.style.border = 'none';
-            rightTd.style.padding = '0';
-
-            const dateDiv = clonedDoc.createElement('div');
-            dateDiv.style.textAlign = 'right';
-            dateDiv.style.fontSize = '12px'; // Matching Left side size!
-            dateDiv.style.lineHeight = '1.4';
-            dateDiv.style.color = '#000000';
-            dateDiv.style.fontFamily = 'sans-serif';
-
-            const dateLabel = clonedDoc.createElement('div');
-            dateLabel.textContent = 'Date:';
-            dateLabel.style.fontWeight = '700';
-            dateLabel.style.textTransform = 'uppercase';
-            dateLabel.style.letterSpacing = '0.5px';
-            dateLabel.style.marginBottom = '4px';
-            dateDiv.appendChild(dateLabel);
-
-            const dateValue = clonedDoc.createElement('div');
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            dateValue.textContent = new Date().toLocaleDateString('en-US', options);
-            dateDiv.appendChild(dateValue);
-            
-            rightTd.appendChild(dateDiv);
-
-            // Assemble row columns
-            hRow.appendChild(leftTd);
-            hRow.appendChild(centerTd);
-            hRow.appendChild(rightTd);
-            headerTable.appendChild(hRow);
-            headerBlock.appendChild(headerTable);
-
-            const table = wrapper.querySelector('.player-table');
-            if (table) {
-              table.style.color = '#000000';
-              table.style.borderCollapse = 'collapse';
-              wrapper.insertBefore(headerBlock, table);
-            }
-
-            // Headers: clean light-gray background with solid black text & border
-            wrapper.querySelectorAll('th').forEach(th => {
-              th.style.background = '#f2f4f3';
-              th.style.color = '#000000';
-              th.style.fontWeight = '700';
-              th.style.borderBottom = '2px solid #000000';
-              th.style.padding = '0.75rem 0.5rem';
-            });
-
-            // Table rows & cells: clean alternating zebra striping and plain black text
-            wrapper.querySelectorAll('tbody tr').forEach((tr, trIdx) => {
-              const bg = trIdx % 2 === 1 ? '#f8f9fa' : '#ffffff'; // Subtle light-gray for even rows
-              tr.querySelectorAll('td').forEach(td => {
-                td.style.color = '#000000';
-                td.style.background = bg;
-                td.style.borderBottom = '1px solid #e0e0e0';
-                // Completely strip the left green indicator border in the printed PDF!
-                td.style.setProperty('border-left', 'none', 'important');
-                td.style.padding = '0.75rem 0.5rem';
-              });
-            });
-
-            // Jersey Numbers: Strip boxes completely and render as plain, bold black text!
-            wrapper.querySelectorAll('.badge-jersey').forEach(badge => {
-              badge.style.background = 'transparent';
-              badge.style.color = '#000000';
-              badge.style.border = 'none';
-              badge.style.fontWeight = '700';
-              badge.style.boxShadow = 'none';
-              badge.style.padding = '0';
-              badge.style.margin = '0';
-              badge.style.borderRadius = '0';
-            });
-
-            // Size Badges: Strip boxes completely and render as plain, bold black text!
-            wrapper.querySelectorAll('.badge-size').forEach(badge => {
-              badge.style.background = 'transparent';
-              badge.style.color = '#000000';
-              badge.style.border = 'none';
-              badge.style.fontWeight = '700';
-              badge.style.boxShadow = 'none';
-              badge.style.padding = '0';
-              badge.style.margin = '0';
-              badge.style.borderRadius = '0';
-              badge.style.width = 'auto';
-              badge.style.height = 'auto';
-              badge.style.display = 'inline';
-              badge.style.backdropFilter = 'none';
-            });
-          }
-        }
-      }).then(canvas => {
-        // PDF compilation logic using jsPDF library
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        
-        // A4 Width: 210mm. 15mm margins on left/right -> 180mm content width.
-        const pageWidth = 210;
-        const margin = 15;
-        const contentWidth = pageWidth - 2 * margin; // 180mm
-        
-        const canvasRatio = canvas.width / canvas.height;
-        const contentHeight = contentWidth / canvasRatio;
-        
-        pdf.addImage(imgData, 'PNG', margin, 10, contentWidth, contentHeight); // Top margin set to 10mm to pull the title higher!
-        pdf.save('khaskandi_zubo_songho_squad.pdf');
-        
-        // Restore button state
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-      }).catch(err => {
-        console.error(err);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        alert('Could not export PDF. Please download CSV instead!');
-      });
-    };
-
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    };
-
-    const runWithLibraries = async () => {
-      try {
-        if (!window.html2canvas) {
-          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
-        }
-        if (!window.jspdf) {
-          await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-        }
-        runExport();
-      } catch (err) {
-        console.error(err);
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-        alert('Offline or network failure: Could not load PDF print engine.');
+    // 1. Calculate Size Counts dynamically based on selected or visible players
+    const counts = {};
+    filteredPlayersList.forEach((p) => {
+      if (hasSelection && !p.selected) return;
+      const sz = (p.size || '').toUpperCase().trim();
+      if (sz) {
+        counts[sz] = (counts[sz] || 0) + 1;
       }
-    };
-
-    runWithLibraries();
+    });
+    
+    const sizeOrder = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL', '3XL'];
+    const sortedSizes = Object.keys(counts).sort((a, b) => {
+      const idxA = sizeOrder.indexOf(a);
+      const idxB = sizeOrder.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+    
+    let sizeText = 'Size Count: ';
+    const sizeParts = [];
+    sortedSizes.forEach(sz => {
+      sizeParts.push(`${sz}=${counts[sz]}`);
+    });
+    sizeText += sizeParts.join(', ');
+    
+    const printSizeCounts = document.getElementById('printSizeCounts');
+    if (printSizeCounts) printSizeCounts.textContent = sizeText;
+    
+    // 2. Set Print Date (Always English)
+    const printDate = document.getElementById('printDate');
+    if (printDate) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dateStr = new Date().toLocaleDateString('en-US', options);
+      printDate.textContent = 'Date: ' + dateStr;
+    }
+    
+    // 3. Renumber serials and hide unselected rows in print layout
+    const rows = document.querySelectorAll('#playerTableBody tr');
+    const originalSerials = [];
+    const serialCells = [];
+    
+    let targetPrintIndex = 1;
+    filteredPlayersList.forEach((p, idx) => {
+      const row = rows[idx];
+      if (!row) return;
+      const serialCell = row.cells[1];
+      if (serialCell) {
+        originalSerials.push(serialCell.textContent);
+        serialCells.push(serialCell);
+        
+        if (hasSelection && !p.selected) {
+          row.classList.add('print-hidden');
+        } else {
+          row.classList.remove('print-hidden');
+          serialCell.textContent = targetPrintIndex;
+          targetPrintIndex++;
+        }
+      }
+    });
+    
+    // 4. Trigger browser native vector print dialog instantly!
+    window.print();
+    
+    // 5. Restore original serial numbers and display styles immediately
+    serialCells.forEach((cell, idx) => {
+      cell.textContent = originalSerials[idx];
+    });
+    rows.forEach(row => row.classList.remove('print-hidden'));
   });
 });
 
