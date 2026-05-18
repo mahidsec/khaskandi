@@ -231,6 +231,14 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPlayers();
   handleScroll(); // Initialize navbar scroll state on load
   
+  // Bulletproof Background Video Autoreplay Loop
+  document.querySelectorAll('video').forEach(video => {
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      video.play().catch(err => console.warn("Video replay auto-recovery prevented by browser policy:", err));
+    });
+  });
+  
   // CSV Downloader trigger
   document.getElementById('downloadCsvBtn')?.addEventListener('click', () => {
     if (playersData.length === 0) return;

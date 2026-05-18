@@ -71,23 +71,6 @@
     line-height: 1.6;
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
   }
-  .hero-btn {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 2rem;
-    padding: 0.75rem 1.75rem;
-    background: var(--accent);
-    color: var(--text-primary);
-    border: none;
-    border-radius: 30px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s ease;
-  }
-  .hero-btn:hover {
-    background: var(--accent-light);
-  }
   .scroll-indicator {
     position: absolute;
     bottom: 2rem;
@@ -144,8 +127,7 @@
   <div class="container hero-container-content">
     <img src="assets/zubosongho/images/logo.png" alt="Khaskandi Zubo Songho Logo" class="hero-logo" style="display: block; margin: 0 auto 1.5rem auto; width: 120px; height: 120px; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));">
     <h1 class="zubo-title" data-en="Khaskandi Zubo Songho" data-bn="খাসকান্দি যুব সংঘ">খাসকান্দি যুব সংঘ</h1>
-    <p class="zubo-subtitle" data-en="Empowering youth, serving community, and building a better Khaskandi." data-bn="তরুণদের ক্ষমতায়ন, সম্প্রদায়ের সেবা এবং একটি উন্নত খাসকান্দি গঠন।">তরুণদের ক্ষমতায়ন, সম্প্রদায়ের সেবা এবং একটি উন্নত খাসকান্দি গঠন।</p>
-    <a href="#squad" class="hero-btn" data-en="Rise, Shine, Win" data-bn="উঠব, জ্বলব, জিতব">উঠব, জ্বলব, জিতব</a>
+    <p class="zubo-subtitle" data-en="Rise, Shine, Win" data-bn="উঠব, জ্বলব, জিতব">উঠব, জ্বলব, জিতব</p>
   </div>
   
   <!-- Gently bouncing scroll-down indicator -->
@@ -159,17 +141,13 @@
 <div class="container">
   <div class="section-header reveal">
     <h2 class="section-title" data-en="Who We Are" data-bn="আমরা কে">আমরা কে</h2>
-    <p class="section-desc" data-en="Khaskandi Zubo Songho is a leading non-profit youth organization in our village, dedicated to social welfare and community unity." data-bn="খাসকান্দি যুব সংঘ আমাদের গ্রামের একটি শীর্ষস্থানীয় অলাভজনক যুব সংগঠন, যা সমাজকল্যাণ এবং সম্প্রদায়ের ঐক্যের জন্য নিবেদিত।">খাসকান্দি যুব সংঘ আমাদের গ্রামের একটি শীর্ষস্থানীয় অলাভজনক যুব সংগঠন, যা সমাজকল্যাণ এবং সম্প্রদায়ের ঐক্যের জন্য নিবেদিত।</p>
   </div>
-  <div class="grid-2 reveal">
-    <div class="card">
-      <h3 data-en="Our Mission" data-bn="আমাদের লক্ষ্য">আমাদের লক্ষ্য</h3>
-      <p data-en="To unite the youth of Khaskandi for social development, education, and humanitarian services." data-bn="সামাজিক উন্নয়ন, শিক্ষা এবং মানবিক সেবার জন্য খাসকান্দির যুবকদের ঐক্যবদ্ধ করা।">সামাজিক উন্নয়ন, শিক্ষা এবং মানবিক সেবার জন্য খাসকান্দির যুবকদের ঐক্যবদ্ধ করা।</p>
-    </div>
-    <div class="card">
-      <h3 data-en="Our Vision" data-bn="আমাদের স্বপ্ন">আমাদের স্বপ্ন</h3>
-      <p data-en="A self-reliant, educated, and prosperous Khaskandi village led by inspired young leaders." data-bn="অনুপ্রাণিত তরুণ নেতাদের নেতৃত্বে একটি স্বনির্ভর, শিক্ষিত এবং সমৃদ্ধ খাসকান্দি গ্রাম।">অনুপ্রাণিত তরুণ নেতাদের নেতৃত্বে একটি স্বনির্ভর, শিক্ষিত এবং সমৃদ্ধ খাসকান্দি গ্রাম।</p>
-    </div>
+  <div class="reveal" style="max-width: 800px; margin: 0 auto; text-align: center;">
+    <p class="about-paragraph" style="font-size: clamp(1.1rem, 2.5vw, 1.3rem); line-height: 1.85; color: rgba(255, 255, 255, 0.85); font-family: 'Hind Siliguri', 'Inter', sans-serif; font-weight: 400; text-shadow: 0 2px 10px rgba(0,0,0,0.5);" 
+       data-en="We are the boys of Khaskandi—standing tall with hearts full of warmth, shoulders locked in brotherhood, and the courage to conquer every storm. With fields of green beneath our feet and skies of dreams above, we stand unbreakable. Whether fighting for a victory on the playfield or serving our neighbors with quiet strength, we protect our home together. We are Khaskandi Zubo Songho—we rise as brothers, we shine as one, and we win as steel!"
+       data-bn="আমরা খাসকান্দির সেইসব তরুণ, যারা বুক ভরা ভালোবাসা আর কাঁধে কাঁধ মিলিয়ে লড়াই করার সাহস নিয়ে দাঁড়িয়েছি। আমাদের মাঠ সবুজ, আমাদের লক্ষ্য আকাশছোঁয়া, আর আমাদের বন্ধন ইস্পাত-কঠিন। গ্রামের সুখ-দুঃখে ভাই হয়ে পাশে থাকা, খেলার মাঠে গর্জে ওঠা, আর সমাজ গড়ার মায়াবী স্বপ্নে বুক বেঁধে পথ চলাই আমাদের পরিচয়। আমরা খাসকান্দি যুব সংঘ—একসঙ্গে উঠি, একসঙ্গে জিতি!">
+       আমরা খাসকান্দির সেইসব তরুণ, যারা বুক ভরা ভালোবাসা আর কাঁধে কাঁধ মিলিয়ে লড়াই করার সাহস নিয়ে দাঁড়িয়েছি। আমাদের মাঠ সবুজ, আমাদের লক্ষ্য আকাশছোঁয়া, আর আমাদের বন্ধন ইস্পাত-কঠিন। গ্রামের সুখ-দুঃখে ভাই হয়ে পাশে থাকা, খেলার মাঠে গর্জে ওঠা, আর সমাজ গড়ার মায়াবী স্বপ্নে বুক বেঁধে পথ চলাই আমাদের পরিচয়। আমরা খাসকান্দি যুব সংঘ—একসঙ্গে উঠি, একসঙ্গে জিতি!
+    </p>
   </div>
 </div>
 </section>
