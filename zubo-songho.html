@@ -9,30 +9,110 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="assets/zubosongho/images/favicon.svg">
 <style>
   .zubo-hero {
-    height: 60vh;
+    position: relative;
+    height: 100vh;
+    height: 100dvh; /* Dynamic screen height standard */
+    min-height: 580px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(10, 26, 18, 0.8), rgba(10, 26, 18, 0.8)), url('https://images.unsplash.com/photo-1529070538492-110b91e29d54?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-    background-size: cover;
-    background-position: center;
     padding-top: 80px;
+    overflow: hidden;
+    background: #0a1a12;
+  }
+  .video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  .video-background video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 26, 18, 0.65) 0%,
+      rgba(10, 26, 18, 0.85) 100%
+    );
+  }
+  .hero-container-content {
+    position: relative;
+    z-index: 2; /* Put text content above background video */
   }
   .zubo-title {
-    font-size: 3rem;
-    color: var(--primary);
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    color: var(--text-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    /* letter-spacing: 1.5px; */
     margin-bottom: 1rem;
     font-family: var(--font-bn);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   }
   .zubo-subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
     color: var(--text-secondary);
-    max-width: 600px;
+    max-width: 650px;
     margin: 0 auto;
+    line-height: 1.6;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 0.75rem 1.75rem;
+    background: var(--accent);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+  .hero-btn:hover {
+    background: var(--accent-light);
+  }
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    animation: scrollBounce 2.2s infinite ease-in-out;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .scroll-indicator:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+  }
+  @keyframes scrollBounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translate(-50%, 0);
+    }
+    40% {
+      transform: translate(-50%, -10px);
+    }
+    60% {
+      transform: translate(-50%, -5px);
+    }
   }
 </style>
 </head>
@@ -42,26 +122,35 @@
 <div id="preloader"><div class="loader-ring"></div></div>
 
 <!-- Navbar -->
-<nav class="navbar scrolled" id="navbar">
+<nav class="navbar" id="navbar">
 <div class="nav-inner">
-  <a href="index.html" class="nav-logo">খাসকান্দি</a>
-  <div class="nav-links" id="navLinks">
-    <a href="index.html#home" data-en="Home" data-bn="প্রচ্ছদ">প্রচ্ছদ</a>
-    <a href="#about" data-en="About" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</a>
-    <a href="#activities" data-en="Activities" data-bn="কার্যক্রম">কার্যক্রম</a>
-    <a href="#members" data-en="Members" data-bn="সদস্যবৃন্দ">সদস্যবৃন্দ</a>
-    <a href="#contact" data-en="Contact" data-bn="যোগাযোগ">যোগাযোগ</a>
+  <a href="index.html" class="nav-logo">
+    <img src="assets/zubosongho/images/logo.png" alt="Khaskandi Zubo Songho Logo" style="height: 38px; width: auto; object-fit: contain; border-radius: 4px;">
+  </a>
+  <div class="nav-links" id="navLinks" style="position: static; display: flex; height: auto; width: auto; background: transparent; padding: 0; backdrop-filter: none; box-shadow: none;">
     <button class="lang-toggle" aria-label="Toggle Language">English</button>
   </div>
-  <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
 </div>
 </nav>
 
-<!-- Hero Section -->
+<!-- Hero Section with Background Video -->
 <header class="zubo-hero">
-  <div class="container">
+  <div class="video-background">
+    <video autoplay loop muted playsinline>
+      <source src="assets/zubosongho/videos/hero-slow.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+  <div class="container hero-container-content">
+    <img src="assets/zubosongho/images/logo.png" alt="Khaskandi Zubo Songho Logo" class="hero-logo" style="display: block; margin: 0 auto 1.5rem auto; width: 120px; height: 120px; object-fit: contain; border-radius: 12px; filter: drop-shadow(0 4px 20px rgba(0,0,0,0.4));">
     <h1 class="zubo-title" data-en="Khaskandi Zubo Songho" data-bn="খাসকান্দি যুব সংঘ">খাসকান্দি যুব সংঘ</h1>
     <p class="zubo-subtitle" data-en="Empowering youth, serving community, and building a better Khaskandi." data-bn="তরুণদের ক্ষমতায়ন, সম্প্রদায়ের সেবা এবং একটি উন্নত খাসকান্দি গঠন।">তরুণদের ক্ষমতায়ন, সম্প্রদায়ের সেবা এবং একটি উন্নত খাসকান্দি গঠন।</p>
+    <a href="#squad" class="hero-btn" data-en="View Squad Roster" data-bn="খেলোয়াড় তালিকা দেখুন">খেলোয়াড় তালিকা দেখুন</a>
+  </div>
+  
+  <!-- Gently bouncing scroll-down indicator -->
+  <div class="scroll-indicator" onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' })" aria-label="Scroll Down">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px; color: rgba(255, 255, 255, 0.45);"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
   </div>
 </header>
 
@@ -85,8 +174,10 @@
 </div>
 </section>
 
+<div class="section-divider"></div>
+
 <!-- Activities Section -->
-<section class="section" id="activities" style="background:linear-gradient(180deg,transparent,rgba(26,107,60,0.04),transparent)">
+<section class="section section-alt" id="activities">
 <div class="container">
   <div class="section-header reveal">
     <h2 class="section-title" data-en="Our Activities" data-bn="আমাদের কার্যক্রম">আমাদের কার্যক্রম</h2>
@@ -108,8 +199,53 @@
 </div>
 </section>
 
+<div class="section-divider"></div>
+
+<!-- Registered Players Section -->
+<section class="section" id="squad">
+<div class="container">
+  <div class="section-header reveal" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem;">
+    <div style="flex: 1; min-width: 280px;">
+      <h2 class="section-title" style="margin-bottom: 0.5rem; text-align: left;" data-en="Squad &amp; Jersey Registry" data-bn="খেলোয়াড় ও জার্সি রেজিস্ট্রি">খেলোয়াড় ও জার্সি রেজিস্ট্রি</h2>
+      <p class="section-desc" style="text-align: left; margin: 0; max-width: 600px;" data-en="Official registration list of Khaskandi Zubo Songho sports team members and their allocated jersey sizes." data-bn="খাসকান্দি যুব সংঘ ক্রীড়া দলের সদস্যদের অফিসিয়াল তালিকা এবং তাদের বরাদ্দকৃত জার্সির সাইজ।">খাসকান্দি যুব সংঘ ক্রীড়া দলের সদস্যদের অফিসিয়াল তালিকা এবং তাদের বরাদ্দকৃত জার্সির সাইজ।</p>
+    </div>
+    <div class="squad-actions" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <button class="btn-download btn-secondary" id="downloadCsvBtn" aria-label="Download CSV Roster">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Download CSV</span>
+      </button>
+      <button class="btn-download btn-primary" id="downloadPdfBtn" aria-label="Download PDF Roster">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; margin-right: 8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span>Download PDF (Print)</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="table-wrapper reveal">
+    <table class="player-table">
+      <thead>
+        <tr>
+          <th style="width: 45px; text-align: center; padding: 0 0.25rem;">
+            <input type="checkbox" id="selectAllCheckbox">
+          </th>
+          <th style="width: 60px; text-align: center;">#</th>
+          <th style="width: 120px; text-align: center;">Jersey No.</th>
+          <th style="text-align: left;">Player Name</th>
+          <th style="width: 90px; text-align: center;">Size</th>
+        </tr>
+      </thead>
+      <tbody id="playerTableBody">
+        <!-- Dynamically loaded from players.json -->
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- Contact Section -->
-<section class="section" id="contact">
+<section class="section section-alt" id="contact">
 <div class="container">
   <div class="section-header reveal">
     <h2 class="section-title" data-en="Join Us" data-bn="আমাদের সাথে যুক্ত হোন">আমাদের সাথে যুক্ত হোন</h2>
@@ -144,9 +280,10 @@
     </div>
     <div class="footer-col">
       <h4 data-en="Quick Links" data-bn="দ্রুত লিঙ্ক">দ্রুত লিঙ্ক</h4>
-      <a href="index.html">Main Website</a>
-      <a href="#about">About Us</a>
-      <a href="#activities">Activities</a>
+      <a href="index.html" data-en="Main Website" data-bn="মূল ওয়েবসাইট">মূল ওয়েবসাইট</a>
+      <a href="#about" data-en="About Us" data-bn="আমাদের সম্পর্কে">আমাদের সম্পর্কে</a>
+      <a href="#activities" data-en="Activities" data-bn="কার্যক্রম">কার্যক্রম</a>
+      <a href="#squad" data-en="Squad Registry" data-bn="স্কোয়াড তালিকা">স্কোয়াড তালিকা</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -154,9 +291,8 @@
   </div>
 </div>
 </footer>
-
-<button class="back-to-top" aria-label="Back to top">Top</button>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>

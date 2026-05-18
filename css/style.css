@@ -25,7 +25,7 @@
 
 @font-face {
     font-family: 'AlinurSangbadpatro';
-    src: url('../fonts/AlinurSangbadpatro.ttf') format('truetype');
+    src: url('../assets/fonts/AlinurSangbadpatro.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -33,7 +33,7 @@
 
 @font-face {
     font-family: 'AlinurSangbadpatro';
-    src: url('../fonts/AlinurSangbadpatro-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/AlinurSangbadpatro-Italic.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
     font-display: swap;
@@ -580,17 +580,7 @@ ul { list-style: none; }
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ===== Back to Top ===== */
-.back-to-top {
-  position: fixed; bottom: 2rem; right: 2rem;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--primary); color: #fff; border: none;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; opacity: 0; visibility: hidden;
-  transition: var(--transition); z-index: 99;
-  box-shadow: 0 4px 15px rgba(26,107,60,0.4);
-}
-.back-to-top.visible { opacity: 1; visibility: visible; }
+
 
 /* ===== Economy Dashboard Elements ===== */
 .scope-badge {
@@ -677,6 +667,210 @@ ul { list-style: none; }
   color: var(--text-primary);
 }
 
+/* ===== Player Registry Table ===== */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--blur-amt));
+  -webkit-backdrop-filter: blur(var(--blur-amt));
+  margin-top: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.player-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.player-table th {
+  background: rgba(22, 163, 74, 0.08);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 1.1rem 1.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--glass-border);
+  white-space: nowrap;
+}
+.player-table td {
+  padding: 1rem 1.5rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background var(--transition);
+}
+.player-table tr:last-child td {
+  border-bottom: none;
+}
+.player-table tr {
+  transition: background var(--transition);
+}
+.player-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-primary);
+}
+/* Action buttons */
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 1.15rem;
+  font-family: var(--font-en), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.btn-download.btn-primary {
+  color: var(--accent-light);
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.25);
+}
+.btn-download.btn-primary:hover {
+  background: rgba(22, 163, 74, 0.22);
+}
+.btn-download.btn-primary:active {
+  background: rgba(22, 163, 74, 0.32);
+}
+
+.btn-download.btn-secondary {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+.btn-download.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+.btn-download.btn-secondary:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Badges for jersey sizes */
+.badge-size {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-family: var(--font-en), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all var(--transition);
+}
+.player-table tr:hover .badge-size {
+  background: rgba(22, 163, 74, 0.08);
+  border-color: rgba(22, 163, 74, 0.3);
+  color: var(--accent-light);
+}
+.badge-jersey {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', Courier, monospace;
+  font-weight: 700;
+  color: var(--accent-light);
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+/* Premium Checkbox Custom Styling */
+.player-select-checkbox, #selectAllCheckbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  outline: none;
+  vertical-align: middle;
+}
+
+.player-select-checkbox:hover, #selectAllCheckbox:hover {
+  border-color: var(--accent-light);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.player-select-checkbox:checked, #selectAllCheckbox:checked {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+.player-select-checkbox:checked::after, #selectAllCheckbox:checked::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  top: 2px;
+  left: 6px;
+}
+
+/* Indeterminate dash state for master checkbox */
+#selectAllCheckbox:indeterminate {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+#selectAllCheckbox:indeterminate::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  background: #ffffff;
+  top: 7px;
+  left: 4px;
+}
+
+/* Table selection states with premium dashboard feedback */
+.player-table tbody tr {
+  transition: all var(--transition);
+  position: relative;
+}
+
+.player-table tbody tr.row-selected {
+  background: rgba(22, 163, 74, 0.16) !important; /* Increased backdrop opacity for rich contrast! */
+}
+
+.player-table tbody tr.row-selected:hover {
+  background: rgba(22, 163, 74, 0.20) !important;
+}
+
+/* Left green accent indicator line (Desktop: on first column td) */
+.player-table tbody tr.row-selected td:first-child {
+  border-left: 3.5px solid var(--accent) !important;
+  transition: all var(--transition);
+}
+
+.player-table tbody tr.row-selected:hover td:first-child {
+  border-left-color: var(--accent-light) !important;
+}
+
+.player-table tbody tr.row-selected .badge-size {
+  background: rgba(22, 163, 74, 0.20);
+  border-color: rgba(22, 163, 74, 0.45);
+  color: var(--accent-light);
+}
+
+
+
 /* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .grid-4 { grid-template-columns: repeat(2,1fr); }
@@ -700,6 +894,36 @@ ul { list-style: none; }
   .location-details { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
+
+  /* Mobile Table Optimizations - Hide Checkbox column & Reduce font sizes */
+  .player-table th:first-child,
+  .player-table td:first-child {
+    display: none !important;
+  }
+  /* Shift Left Green Accent Indicator to Serial cell (2nd child) on mobile viewports! */
+  .player-table tbody tr.row-selected td:nth-child(2) {
+    border-left: 3.5px solid var(--accent) !important;
+    transition: all var(--transition);
+  }
+  .player-table tbody tr.row-selected:hover td:nth-child(2) {
+    border-left-color: var(--accent-light) !important;
+  }
+  .player-table th {
+    font-size: 0.72rem;
+    padding: 0.8rem 0.5rem;
+  }
+  .player-table td {
+    font-size: 0.85rem;
+    padding: 0.8rem 0.5rem;
+  }
+  .badge-size {
+    width: 32px;
+    height: 24px;
+    font-size: 0.72rem;
+  }
+  .badge-jersey {
+    font-size: 1.05rem;
+  }
 }
 @media (max-width: 480px) {
   .stats-row { grid-template-columns: 1fr; }
